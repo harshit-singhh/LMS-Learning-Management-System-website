@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "https://studysync-xi.vercel.app",
+    origin: "https://studysync-lms.vercel.app",
     credentials: true,
   })
 );
