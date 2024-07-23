@@ -1,6 +1,6 @@
 import axios from 'axios'
-const BASE_URL = "https://lms-learning-management-system-website.onrender.com";
-
+const BASE_URL = "https://lms-learning-management-system-website.onrender.com/api/v1";
+                  https://lms-learning-management-system-website.onrender.com
 const axiosInstance = axios.create();
 
 axiosInstance.defaults.baseURL = BASE_URL;
