@@ -22,14 +22,14 @@ import crypto from "crypto";
 //   // domain: "lms-learning-management-system-website.onrender.com",
 // };
 
-res.cookie("token", token, {
+const cookieOptions = {
   path: "/", // Root path of the domain
   httpOnly: true, // Cookie not accessible via JavaScript
   // expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Expires in 7 days
   sameSite: "None", // Allows cross-origin requests
   secure: true, // Cookie only sent over HTTPS in production
   // domain: "lms-learning-management-system-website.onrender.com", // Backend domain
-});
+};
 
 
 
