@@ -16,12 +16,11 @@ import crypto from "crypto";
 
 
 const cookieOptions = {
-  secure: process.env.NODE_ENV === "production",
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   httpOnly: true,
-  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  secure: true,
+  sameSite: "none",
+  domain: "lms-learning-management-system-website.onrender.com/",
 };
-
 
 
 export const registerUser = asyncHandler(async (req, res, next) => {
