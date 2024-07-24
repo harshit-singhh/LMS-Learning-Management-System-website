@@ -7,12 +7,21 @@ import asyncHandler from "../middlewares/asyncHandler.middleware.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
 
+// const cookieOptions = {
+//     // This means that in a production environment, the cookie will only be sent over HTTPS, enhancing security. In development, it will be sent over both HTTP and HTTPS.
+//   secure: process.env.NODE_ENV === "production" ? true : false,
+//   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+//   httpOnly: true,
+// };
+
+
 const cookieOptions = {
-    // This means that in a production environment, the cookie will only be sent over HTTPS, enhancing security. In development, it will be sent over both HTTP and HTTPS.
-  secure: process.env.NODE_ENV === "production" ? true : false,
+  secure: process.env.NODE_ENV === "production",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   httpOnly: true,
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
 };
+
 
 
 export const registerUser = asyncHandler(async (req, res, next) => {
