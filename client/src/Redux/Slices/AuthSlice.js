@@ -6,10 +6,18 @@ import axiosInstance from "../../Helpers/axiosInstance";
 const initialState = {
   isLoggedIn: JSON.parse(localStorage.getItem("isLoggedIn")) || false,
   role: localStorage.getItem("role") || "",
-  data:
-    localStorage.getItem("data") != null
-      ? JSON.parse(localStorage.getItem("data"))
-      : {},
+  data: (() => {
+    const data = localStorage.getItem("data");
+    if (data === null || data === "undefined") {
+      return {}; // Return empty object if data is null or "undefined"
+    }
+    try {
+      return JSON.parse(data); // Try to parse JSON
+    } catch (e) {
+      console.error("Failed to parse JSON from localStorage:", e);
+      return {}; // Return empty object if JSON parsing fails
+    }
+  })(),
 };
 
 
