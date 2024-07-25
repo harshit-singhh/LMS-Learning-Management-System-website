@@ -5,20 +5,25 @@ import TempUser from '../models/TempUser.model.js';
 import { TIMEOUT } from "dns";
 import sendEmail from "../utils/sendEmail.js";
 import User from "../models/user.model.js";
+import AppError from "../utils/appError.js";
 
 export const SendOtp = asyncHandler(async (req, res, next) => {
     const { email } = req.body;
 
-
+    console.log("before any checks");
 
     if (!email) {
         return next(new AppError("email is required", 400));
     }
 
+    console.log("check1 completed")
+
     const user = User.findOne({ email });
     if (user) {
          return next(new AppError("User with this email already exists", 400));
     }
+
+      console.log("check2 completed");
 
     const otp = crypto.randomInt(100000, 999999).toString();
     const otpExpiry = Date.now() + 3600000; // otp expires in 1 hour
@@ -31,11 +36,13 @@ export const SendOtp = asyncHandler(async (req, res, next) => {
         otpExpiry: otpExpiry,
     })
 
+     
+
     if (!tempuser) {
         return next(new AppError("Something went wrong", 400));
     }
 
-
+     console.log("temp user created");
 
     //sending mail
 
