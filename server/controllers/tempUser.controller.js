@@ -4,12 +4,20 @@ import crypto from "crypto";
 import TempUser from '../models/TempUser.model.js';
 import { TIMEOUT } from "dns";
 import sendEmail from "../utils/sendEmail.js";
+import User from "../models/user.model.js";
 
 export const SendOtp = asyncHandler(async (req, res, next) => {
     const { email } = req.body;
 
+
+
     if (!email) {
         return next(new AppError("email is required", 400));
+    }
+
+    const user = User.findOne({ email });
+    if (user) {
+         return next(new AppError("User with this email already exists", 400));
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
