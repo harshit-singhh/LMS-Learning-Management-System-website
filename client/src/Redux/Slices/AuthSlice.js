@@ -118,6 +118,53 @@ export const getUserData = createAsyncThunk("/user/details", async () => {
 
 // =================================================================================
 
+export const SendEmailforPasswordReset = createAsyncThunk("/password/resetmail", async (data) => {
+  try {
+    const res = axiosInstance.post(`user/reset`, data);
+
+    // normally as axiosInstance is a async
+    toast.promise(res, {
+      loading: "Sending mail to your email id",
+      success: (Fulldata) => {
+        return Fulldata?.data?.message;
+        // this will  show the message which will come from the server
+        // i.e user registered successfully.
+      },
+      error: "Failed to send the mail, Try again",
+    });
+
+    return (await res).data; // wait for the res to get the data.. then send the data.
+  } catch (error) {
+    toast.error(error?.response?.data?.message);
+  }
+})
+
+// =================================================================================
+
+export const resetPassword = createAsyncThunk(
+  "/resetPass",
+  async (data) => {
+    try {
+      const res = axiosInstance.post(`user/reset/${data.resetToken}`, data);
+
+      // normally as axiosInstance is a async
+      toast.promise(res, {
+        loading: "Wait! Sending reset password link to your email",
+        success: (Fulldata) => {
+          return Fulldata?.data?.message;
+          // this will  show the message which will come from the server
+          // i.e user registered successfully.
+        },
+        error: "Failed to reset the password, Try again",
+      });
+
+      return (await res).data; // wait for the res to get the data.. then send the data.
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+    }
+  }
+);
+
 
 
 const authSlice = createSlice({

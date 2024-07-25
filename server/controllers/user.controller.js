@@ -6,6 +6,7 @@ import fs from "fs/promises";
 import asyncHandler from "../middlewares/asyncHandler.middleware.js";
 import sendEmail from "../utils/sendEmail.js";
 import crypto from "crypto";
+import TempUser from "../models/TempUser.model.js";
 
 // const cookieOptions = {
 //     // This means that in a production environment, the cookie will only be sent over HTTPS, enhancing security. In development, it will be sent over both HTTP and HTTPS.
@@ -41,6 +42,11 @@ export const registerUser = asyncHandler(async (req, res, next) => {
   if (!fullName || !email || !password) {
     return next(new AppError("All fields are required", 400));
   }
+
+  // first delete the tempUser that we created.
+
+  const result = await TempUser.deleteOne({ email });
+  
 
   // Check if the user exists with the provided email
   const userExists = await User.findOne({ email });
@@ -238,7 +244,7 @@ export const forgotPassword = asyncHandler(async (req, res, next) => {
 
   // We here need to send an email to the user with the token
   const subject = 'Reset Password';
-  const message = `You can reset your password by clicking <a href=${resetPasswordUrl} target="_blank">Reset your password</a>\nIf the above link does not work for some reason then copy paste this link in new tab ${resetPasswordUrl}.\n If you have not requested this, kindly ignore.`;
+  const message = `You can reset your password by clicking <a href=${resetPasswordUrl} target="_blank">Reset your password</a> <br> If the above link does not work for some reason then copy paste this link in new tab ${resetPasswordUrl}. <br>  If you have not requested this, kindly ignore.`;
 
   try {
     await sendEmail(email, subject, message);

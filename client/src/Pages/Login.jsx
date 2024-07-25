@@ -96,6 +96,13 @@ function Signup() {
               Signup
             </Link>
           </p>
+          <p className="text-center">
+            Forgot Password ? {" "}
+            <Link to="/forgotpassword" className="link text-accent cursor-pointer">
+              {" "}
+              Click Here
+            </Link>
+          </p>
         </form>
       </div>
     </HomeLayout>

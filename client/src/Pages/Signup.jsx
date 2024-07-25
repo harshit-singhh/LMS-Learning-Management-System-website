@@ -4,6 +4,7 @@ import { BsPersonCircle } from "react-icons/bs";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
+import axiosInstance from "../Helpers/axiosInstance";
 import { isEmail, isValidPassword } from "../Helpers/regexMatcher";
 import HomeLayout from "../Layouts/HomeLayout";
 import { createAccount } from "../Redux/Slices/AuthSlice";
@@ -11,6 +12,10 @@ import { createAccount } from "../Redux/Slices/AuthSlice";
 function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
 
   const [previewImage, setPreviewImage] = useState("");
 
@@ -48,6 +53,12 @@ function Signup() {
   }
 
   async function createNewAccount(event) {
+
+
+    if (!otpVerified) {
+      toast.error("Please verify your OTP before signing up.");
+      return;
+    }
     event.preventDefault();
     if (
       !signupData.email ||
@@ -95,6 +106,66 @@ function Signup() {
     });
     setPreviewImage("");
   }
+
+
+  // =======================================================================
+  // OTP PART
+
+  const sendOtp = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = axiosInstance.post("/tempUser/send-otp", signupData );
+      toast.promise(response, {
+        loading: "Sending OTP to your mail",
+        success: "OTP sent successfully",
+        error: "Failed to send the OTP",
+      });
+      const Response = await response;
+      // console.log(Response);
+      if (Response?.data?.success) {
+        setOtpSent(true);
+      }
+    } catch (err) {
+      toast.error(err);
+    }
+
+
+  }
+
+
+  const verifyOtp = async (e) => {
+    e.preventDefault();
+
+    const data = {
+      email: signupData.email,
+      otp : otp,
+    }
+    try {
+      const response = axiosInstance.get("/tempUser/verify-otp", {params  : data});
+      toast.promise(response, {
+        loading: "Wait!! Verifying your OTP",
+        success: (res) => {
+          return res.data.message;
+        } 
+        // error: "Failed to  the OTP",
+      });
+      const Response = await response;
+      // console.log(Response);
+      if (Response?.data?.status) {
+        setOtpVerified(true);
+        console.log(`otp verified : ${otpVerified}`);
+        
+      }
+
+      
+    } catch (err) {
+      toast.error(err);
+    }
+
+  }
+
+  
 
   return (
     <HomeLayout>
@@ -156,6 +227,45 @@ function Signup() {
               value={signupData.email}
             />
           </div>
+
+          <button
+            onClick={sendOtp}
+            className="mt-2 bg-gray-500 hover:bg-gray-400 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold text-lg cursor-pointer"
+          >
+            Send OTP
+          </button>
+
+          {otpSent && (
+            <div className="flex flex-col gap-1">
+              <label htmlFor="otp" className="font-semibold">
+                {" "}
+                OTP{" "}
+              </label>
+              <input
+                type="otp"
+                required
+                name="otp"
+                id="otp"
+                placeholder="Enter your otp.."
+                className="bg-transparent px-2 py-1 border"
+                onChange={(e) => setOtp(e.target.value)}
+                value={otp}
+              />
+              <button
+                onClick={verifyOtp}
+                className={`mt-2 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold text-lg cursor-pointer ${
+                  otpVerified
+                    ? "bg-green-500 hover:bg-green-400"
+                    : "bg-gray-500 hover:bg-gray-400"
+                }`}
+              >
+                {otpVerified ? "Verified" : "Verify OTP"}
+              </button>
+            </div>
+          )}
+
+          
+
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="font-semibold">
               {" "}
@@ -170,9 +280,7 @@ function Signup() {
               className="bg-transparent px-2 py-1 border"
               onChange={handleUserInput}
               value={signupData.password}
-              
             />
-
           </div>
 
           <button
