@@ -18,7 +18,7 @@ export const SendOtp = asyncHandler(async (req, res, next) => {
 
     console.log("check1 completed")
 
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
     if (user) {
          return next(new AppError("User with this email already exists", 400));
     }
